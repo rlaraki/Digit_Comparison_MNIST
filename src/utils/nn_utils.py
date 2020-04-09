@@ -6,7 +6,9 @@ Description: neural network utils
 import torch
 
 
-def train_model(model, num_epochs, train_loader, flatten=True):
+
+def train_model(model, num_epochs, train_loader, flatten=True, verbose=False):
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Copy all model parameters to the GPU
     model = model.to(device)
@@ -35,4 +37,8 @@ def train_model(model, num_epochs, train_loader, flatten=True):
                 optimizer.step()
 
                 total_loss += loss.item()
-            print("Epoch %d, Loss=%.4f" % (epoch + 1, total_loss / len(train_loader)))
+            if verbose:
+                print("Epoch %d, Batch %d, Loss=%.4f" % (epoch + 1, split + 1, total_loss / len(train_loader)))
+        if not(verbose):
+            print("End of Epoch %d, Avg Loss=%.4f" % (epoch+1, total_loss / len(train_loader)))
+

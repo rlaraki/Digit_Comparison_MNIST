@@ -22,6 +22,7 @@ class LinearReluNet(nn.Module):
         self.input_size = input_size
         self.num_classes = num_classes
 
+
         self.net = nn.Sequential(
             OrderedDict(
                 [
@@ -30,6 +31,7 @@ class LinearReluNet(nn.Module):
                     ("linear_2", nn.Linear(75, 50)),
                     ("Relu2", nn.ReLU()),
                     ("linear_3", nn.Linear(50, num_classes)),
+
                 ]
             )
         )
