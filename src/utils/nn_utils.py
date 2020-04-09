@@ -6,7 +6,7 @@ Description: neural network utils
 import torch
 
 
-def train_model(model, num_epochs, train_loader):
+def train_model(model, num_epochs, train_loader, flatten=True):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # Copy all model parameters to the GPU
     model = model.to(device)
@@ -21,9 +21,12 @@ def train_model(model, num_epochs, train_loader):
             for i in range(2):  # train on each element of the pair
                 inputs_single = inputs[:, i, :, :].to(device)
                 labels_single = labels.t()[i].to(device)
-                inputs_single = inputs_single.view(
-                    -1, inputs_single.shape[1] * inputs_single.shape[2]
-                )
+                if flatten:
+                    inputs_single = inputs_single.view(
+                        -1, inputs_single.shape[1] * inputs_single.shape[2]
+                    )
+                else:
+                    inputs_single = inputs_single.unsqueeze(1) # Add color channel 
                 optimizer.zero_grad()
                 outputs = model(inputs_single)
 

@@ -4,7 +4,7 @@ File: metrics.py
 Description: utils file to store metrics functions 
 """
 import torch
-def accuracy(model, data_loader):
+def accuracy(model, data_loader, flatten=True):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     with torch.no_grad():
         correct = 0
@@ -13,9 +13,13 @@ def accuracy(model, data_loader):
             inputs_1 = inputs[:, 0, :, :].to(device)
             inputs_2 = inputs[:, 1, :, :].to(device)
             
-            inputs_1 = inputs_1.view(-1, inputs_1.shape[1] * inputs_1.shape[2])
-            inputs_2 = inputs_2.view(-1, inputs_2.shape[1] * inputs_2.shape[2])
-            
+            if flatten:
+                inputs_1 = inputs_1.view(-1, inputs_1.shape[1] * inputs_1.shape[2])
+                inputs_2 = inputs_2.view(-1, inputs_2.shape[1] * inputs_2.shape[2])
+            else:
+                inputs_1 = inputs_1.unsqueeze(1) # Add color channel
+                inputs_2 = inputs_2.unsqueeze(1)
+
             outputs_1 = model(inputs_1)
             outputs_2 = model(inputs_2)
 
