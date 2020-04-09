@@ -16,11 +16,12 @@ class LinearReluNet(nn.Module):
 
     """Pytorch implementation of a neural network with linear layer and relu activation funtions"""
 
-    def __init__(self, input_size, nb_classes):
+    def __init__(self, input_size, num_classes):
         super(LinearReluNet, self).__init__()
 
         self.input_size = input_size
-        self.nb_classes = nb_classes
+        self.num_classes = num_classes
+
 
         self.net = nn.Sequential(
             OrderedDict(
@@ -29,7 +30,8 @@ class LinearReluNet(nn.Module):
                     ("Relu1", nn.ReLU()),
                     ("linear_2", nn.Linear(75, 50)),
                     ("Relu2", nn.ReLU()),
-                    ("linear_3", nn.Linear(50, nb_classes)),
+                    ("linear_3", nn.Linear(50, num_classes)),
+
                 ]
             )
         )
