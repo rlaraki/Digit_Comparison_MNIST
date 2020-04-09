@@ -8,6 +8,7 @@ from torch.utils import data
 
 from models.LeNet import lenet
 from models.LinearReluNet import linear_relu_net
+from models.ResNet import residual_net
 from utils.dlc_practical_prologue import generate_pair_sets
 from utils.metrics import accuracy
 from utils.nn_utils import train_model
@@ -21,9 +22,14 @@ DATA_TENSORS = generate_pair_sets(N)
 NN_ARGS = {"input_size": 14 * 14, "num_classes": 10}
 BATCH_SIZE = 100
 NUM_EPOCHS = 25
+MODELS = {
+    "LinearRelu": {"args": NN_ARGS, "f": linear_relu_net, "flatten": True},
+    "LeNet": {"args": None, "f": lenet, "flatten": False},
+    "ResNet": {"args": None, "f": residual_net, "flatten": False},
+}
 
 
-if __name__ == "__main__":
+def init_loaders():
     # Datasets
     (
         train_input,
@@ -47,15 +53,34 @@ if __name__ == "__main__":
     test_loader = torch.utils.data.DataLoader(
         dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False
     )
+    return train_loader, test_loader
 
-    # Init a model
-    linear_relu_model = linear_relu_net(**NN_ARGS)
-    lenet = lenet()
-    # Train a model
-    train_model(linear_relu_model, NUM_EPOCHS, train_loader)
-    train_model(lenet, NUM_EPOCHS, train_loader, flatten=False)
-    # Test a model
-    print("LinearRelu model accuracy:")
-    print(accuracy(linear_relu_model, test_loader))
-    print("LeNet model accuracy:")
-    print(accuracy(lenet, test_loader, flatten=False))
+
+def train_test(train_loader, test_loader):
+    for key in MODELS:
+        args = MODELS.get(key).get("args")
+        f = MODELS.get(key).get("f")
+        flatten = MODELS.get(key).get("flatten")
+        name = key
+        # Init
+        if args is None:
+            model = f()
+        else:
+            model = f(**args)
+
+        print("Training " + name)
+        # Train
+        train_model(model, NUM_EPOCHS, train_loader, flatten=flatten)
+
+        print("Testing " + name)
+        # Testing
+        print(accuracy(model, test_loader, flatten=flatten))
+
+
+if __name__ == "__main__":
+
+    # Prepare data
+    train_loader, test_loader = init_loaders()
+
+    # Train and test models
+    train_test(train_loader, test_loader)
