@@ -21,23 +21,12 @@ class CustomNet(nn.Module):
             }
         )
         )
-        # TODO : create sequential
 
     def backward(self, d_loss):
-        dl_x1 = self.tanh1.backward(d_loss)
-        dl_s1 = self.linear1.backward(dl_x1)
-
-        grads = []
-        grads.append(dl_s1.view(-1, 1).mm(self.x.view(1, -1)))
-        grads.append(dl_s1)
-        self.add_parameter('grads', grads)
+        return self.f.backward(d_loss)
 
     def forward(self, x):
         return self.f(x)
-#        self.x = x
-#        s1 = self.linear1(x)
-#        self.x1 = self.tanh1(s1)
-#        return self.x1
 
 
 if __name__ == "__main__":

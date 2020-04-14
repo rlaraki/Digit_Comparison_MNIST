@@ -8,6 +8,8 @@ from collections import OrderedDict
 class Module(object):
     def __init__(self):
         self.__params = OrderedDict()
+        self.weights = None
+        self.bias = None
 
     def param(self):
         return self.__params

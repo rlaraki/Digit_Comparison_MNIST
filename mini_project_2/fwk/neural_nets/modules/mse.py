@@ -3,7 +3,6 @@ File: mse.py
 Description: MSE loss function implementation
 """
 from .module import Module
-import torch
 
 
 class MSE(Module):
@@ -20,7 +19,8 @@ class MSE(Module):
 
     def backward(self, model):
         grad = self.__dloss(self.param().get('input'), self.param().get('target'))
-        model.backward(grad)
+        grads = model.backward(grad)
+        model.add_parameter('grads', grads)
         return grad
 
     def forward(self, input, target):
