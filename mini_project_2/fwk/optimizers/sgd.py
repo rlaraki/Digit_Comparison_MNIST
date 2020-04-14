@@ -11,4 +11,4 @@ class SGD(Optimizer):
         super(SGD, self).__init__(params)
 
     def step(self):
-        pass
+        print(self.param().get('grads'))
