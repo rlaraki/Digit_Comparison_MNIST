@@ -19,7 +19,7 @@ def train_model(model, num_epochs, train_loader, flatten=True, verbose=False):
     for epoch in range(num_epochs):
         total_loss = 0.0
 
-        for (inputs, labels) in train_loader:
+        for split, (inputs, labels) in enumerate(train_loader):
             for i in range(2):  # train on each element of the pair
                 inputs_single = inputs[:, i, :, :].to(device)
                 labels_single = labels.t()[i].to(device)
