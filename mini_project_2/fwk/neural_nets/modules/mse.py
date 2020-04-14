@@ -12,15 +12,16 @@ class MSE(Module):
         self.__loss_value = None
 
     def __loss(self, input, target):
-        return ((input - target) ** 2).mean()
+        return (input - target).pow(2).sum()
 
     def __dloss(self, input, target):
-        return 2 * (- (target - input))
+        return 2 * (input - target)
 
     def backward(self, model):
         grad = self.__dloss(self.param().get('input'), self.param().get('target'))
         grads = model.backward(grad)
         model.add_parameter('grads', grads)
+        model.add_parameter('layers', model.f.layers)
         return grad
 
     def forward(self, input, target):

@@ -22,13 +22,17 @@ class Sequential(Module):
     def backward(self, d_loss):
         reversed_layers = OrderedDict(reversed(list(self.layers.items())))
         prev_d = d_loss
+        derivative = [] # Queue to store last compute s(l)/dx
         for key in reversed_layers:
             layer = self.layers.get(key)
             prev_d = layer.backward(prev_d)
             if layer.weights is not None:
                 if layer.bias is None:
-                    if self.grads[key] is None:
-                        self.grads[key] = (prev_d.view(-1, 1).mm(layer.param().get('input').view(1, -1)), None)
+                    self.grads[key] = (derivative[-1].view(-1, 1).mm(layer.param().get('input').view(1, -1)), None)
+                    derivative.pop(-1)
                 else:
-                    self.grads[key] = (prev_d.view(-1, 1).mm(layer.param().get('input').view(1, -1)), prev_d)
+                    self.grads[key] = (derivative[-1].view(-1, 1).mm(layer.param().get('input').view(1, -1)), derivative[-1])
+                    derivative.pop(-1)
+            else:
+                derivative.append(prev_d)
         return self.grads

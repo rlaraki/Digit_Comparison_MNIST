@@ -8,7 +8,7 @@ import torch
 from collections import OrderedDict
 
 torch.set_grad_enabled(False)
-
+N_EPOCHS = 10000
 
 class CustomNet(nn.Module):
 
@@ -16,8 +16,14 @@ class CustomNet(nn.Module):
         super(CustomNet, self).__init__()
         self.f = nn.Sequential(OrderedDict(
             {
-                'linear 1': nn.Linear(2, 2),
-                'tanh 1': nn.Tanh()
+                'linear 1': nn.Linear(2, 25),
+                'tanh 1': nn.Tanh(),
+                'linear 2': nn.Linear(25, 25),
+                'tanh 2': nn.Tanh(),
+                'linear 3': nn.Linear(25, 25),
+                'tanh 3': nn.Tanh(),
+                'linear 4': nn.Linear(25, 2),
+                'tanh 4': nn.Tanh(),
             }
         )
         )
@@ -31,24 +37,25 @@ class CustomNet(nn.Module):
 
 if __name__ == "__main__":
     # Dummy data
-    x = torch.tensor([1., 2.])  # TODO: generate data from distribution
-    y = torch.tensor([0., 3.])
+    x = torch.tensor([0.5, 0.7])  # TODO: generate data from distribution
+    y = torch.tensor([0., 1.])
 
     # Dummy use case
     model = CustomNet()
     criterion = nn.MSE()
-    optimizer = optim.SGD(model.param())
+    optimizer = optim.SGD(model.param(), eta=0.01)
 
-    # Forward
-    output = model(x)
-    print(output)
-    loss = criterion(output, y)
+    for i in range(N_EPOCHS):
+        # Forward
+        output = model(x)
+        loss = criterion(output, y)
 
-    # Backward
-    loss.backward(model)
+        # Backward
+        loss.backward(model)
 
-    # Update weights
-    optimizer.step()
+        # Update weights
+        optimizer.step()
 
-    # Print loss
-    print(loss.item())
+        # Print loss
+        print(loss.item())
+        print(output)

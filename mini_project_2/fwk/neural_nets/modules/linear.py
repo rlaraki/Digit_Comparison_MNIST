@@ -9,17 +9,15 @@ import math
 
 class Linear(Module):
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, epsilon=1e-6):
         super(Linear, self).__init__()
         self.input_size = input_size
         self.output_size = output_size
+        self.epsilon = epsilon
 
         # Weights and biases Init
-        self.weights = torch.empty((self.output_size, self.input_size))
-        stdv = 1. / math.sqrt(self.weights.size(1))
-        self.weights.data.uniform_(-stdv, stdv)
-        self.bias = torch.empty(output_size)  # TODO: check if zero allowed
-        self.bias.data.uniform_(-stdv, stdv)
+        self.weights = torch.empty(self.output_size, self.input_size).normal_(0, epsilon)
+        self.bias = torch.empty(output_size).normal_(0, epsilon)
 
     def backward(self, grad_wr_to_output):
         return self.weights.t().mv(grad_wr_to_output)
