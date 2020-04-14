@@ -58,4 +58,3 @@ if __name__ == "__main__":
 
         # Print loss
         print(loss.item())
-        print(output)
