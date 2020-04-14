@@ -18,5 +18,8 @@ class Module(object):
     def backward(self, *grad_wr_to_output):
         raise NotImplementedError
 
+    def add_parameter(self, key, value):
+        self._params[key] = value
+
     def __call__(self, *args, **kwargs):
         return self.forward(*args)
