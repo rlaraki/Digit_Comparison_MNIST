@@ -13,20 +13,26 @@ class CustomNet(nn.Module):
 
     def __init__(self):
         super(CustomNet, self).__init__()
-        self.linear = nn.Linear()
+        self.linear1 = nn.Linear(2, 25)
+        self.linear2 = nn.Linear(25, 25)
+        self.linear3 = nn.Linear(25, 25)
+        self.linear4 = nn.Linear(25, 2)
 
     def backward(self, out):
         return out  # Dummy
 
-    def forward(self, input):
-        x = self.linear(input)  # Is None for the moment
-        return x
+    def forward(self, x):
+        x1 = self.linear1(x)
+        x2 = self.linear2(x1)
+        x3 = self.linear3(x2)
+        x4 = self.linear4(x3)
+        return x4
 
 
 if __name__ == "__main__":
     # Dummy data
-    x = torch.tensor([1, 2, 3])
-    y = torch.tensor([1])
+    x = torch.tensor([1., 3.]) # TODO: generate data from distribution
+    y = torch.tensor([1.])
 
     # Dummy use case
     model = CustomNet()
@@ -35,6 +41,7 @@ if __name__ == "__main__":
 
     # Forward
     output = model(x)
+    print(output)
     loss = criterion(output, y)
 
     # Backward

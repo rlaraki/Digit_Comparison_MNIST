@@ -19,4 +19,4 @@ class Linear(Module):
         pass
 
     def forward(self, x):
-        return self.weights.mv(x)
+        return x @ self.weights
