@@ -1,5 +1,5 @@
 """
-File: use_case.py
+File: test.py
 Description: Use case of the implemented framework
 """
 import mini_project_2.fwk.neural_nets as nn
@@ -42,6 +42,9 @@ if __name__ == "__main__":
 
     # Update weights
     optimizer.step()
+
+    # Print loss
+    print(loss.item())
 
 
 
