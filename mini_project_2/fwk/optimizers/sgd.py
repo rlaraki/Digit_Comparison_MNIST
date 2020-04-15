@@ -17,8 +17,11 @@ class SGD(Optimizer):
         for key in grads:
             layer = layers.get(key)
             grad = grads.get(key)
-            if grad[1] is not None: # Check if bias
+            if grad[1] is not None:  # Check if bias
                 layer.weights -= self.eta * grad[0]
                 layer.bias -= self.eta * grad[1]
             else:
                 layer.weights -= self.eta * grad[0]
+
+    def set_eta(self, value):
+        self.eta = value
