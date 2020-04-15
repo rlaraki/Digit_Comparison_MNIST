@@ -22,13 +22,13 @@ class CustomNet(nn.Module):
         self.f = nn.Sequential(OrderedDict(
             {
                 'linear 1': nn.Linear(2, 25),
-                'tanh 1': nn.Tanh(),
+                'relu 1': nn.ReLU(),
                 'linear 2': nn.Linear(25, 25),
-                'tanh 2': nn.Tanh(),
+                'relu 2': nn.ReLU(),
                 'linear 3': nn.Linear(25, 25),
-                'tanh 3': nn.Tanh(),
+                'relu 3': nn.ReLU(),
                 'linear 4': nn.Linear(25, 2),
-                'relu': nn.ReLU(),
+                'last act': nn.Tanh(),
             }
         )
         )
@@ -44,10 +44,12 @@ if __name__ == "__main__":
     # Data
     X, Y = data.generate_data()
 
-    # Dummy use case
+    # Use case
     model = CustomNet()
     criterion = nn.MSE()
-    optimizer = optim.SGD(model.param(), eta=0.1 / len(X))
+
+    eta = 0.001 / len(X)  # learning rate
+    optimizer = optim.SGD(model.param(), eta=eta)
 
     losses = []
     step = len(X)
@@ -71,9 +73,10 @@ if __name__ == "__main__":
 
         # Update weights
         optimizer.step()
+        # Decrease step size
+        optimizer.set_eta(eta / (1 + (2 / (i + 1))))
 
         # Print loss
-        print(error)
         print("Epoch %d, Loss=%.4f, Training_Acc=%.4f" % (i + 1, avg_loss, (step - error) / step))
 
     # Test
