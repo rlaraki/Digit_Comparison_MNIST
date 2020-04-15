@@ -23,5 +23,8 @@ class Module(object):
     def add_parameter(self, key, value):
         self.__params[key] = value
 
+    def zero_grad(self):
+        self.__params['grad'] = None
+
     def __call__(self, *args, **kwargs):
         return self.forward(*args)

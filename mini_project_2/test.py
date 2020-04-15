@@ -8,7 +8,8 @@ import torch
 from collections import OrderedDict
 
 torch.set_grad_enabled(False)
-N_EPOCHS = 10000
+N_EPOCHS = 10
+
 
 class CustomNet(nn.Module):
 
@@ -37,24 +38,29 @@ class CustomNet(nn.Module):
 
 if __name__ == "__main__":
     # Dummy data
-    x = torch.tensor([0.5, 0.7])  # TODO: generate data from distribution
-    y = torch.tensor([0., 1.])
+    X = [torch.tensor([0.5, 0.7]), torch.tensor([2., 1.])]  # TODO: generate data from distribution
+    Y = [torch.tensor([1., 0.])]
 
     # Dummy use case
     model = CustomNet()
     criterion = nn.MSE()
     optimizer = optim.SGD(model.param(), eta=0.01)
 
+    losses = []
     for i in range(N_EPOCHS):
-        # Forward
-        output = model(x)
-        loss = criterion(output, y)
+        avg_loss = 0
+        model.zero_grad()
+        for (x, y) in zip(X, Y):
+            # Forward
+            output = model(x)
+            loss = criterion(output, y)
+            avg_loss += loss.item() / len(X)
 
-        # Backward
-        loss.backward(model)
+            # Backward
+            loss.backward(model)
 
         # Update weights
         optimizer.step()
 
         # Print loss
-        print(loss.item())
+        print(avg_loss)
