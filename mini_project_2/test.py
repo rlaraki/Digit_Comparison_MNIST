@@ -7,8 +7,11 @@ import mini_project_2.fwk.optimizers as optim
 import torch
 from collections import OrderedDict
 
+# Disable auto_grad
 torch.set_grad_enabled(False)
-N_EPOCHS = 10
+
+# Global variables
+N_EPOCHS = 100
 
 
 class CustomNet(nn.Module):
@@ -39,21 +42,21 @@ class CustomNet(nn.Module):
 if __name__ == "__main__":
     # Dummy data
     X = [torch.tensor([0.5, 0.7]), torch.tensor([2., 1.])]  # TODO: generate data from distribution
-    Y = [torch.tensor([1., 0.])]
+    Y = [torch.tensor([1., 0.]), torch.tensor([0., 1.])]
 
     # Dummy use case
     model = CustomNet()
     criterion = nn.MSE()
-    optimizer = optim.SGD(model.param(), eta=0.01)
+    optimizer = optim.SGD(model.param(), eta=0.1/len(X))
 
     losses = []
     for i in range(N_EPOCHS):
         avg_loss = 0
         model.zero_grad()
-        for (x, y) in zip(X, Y):
+        for n in range(len(X)):
             # Forward
-            output = model(x)
-            loss = criterion(output, y)
+            output = model(X[n])
+            loss = criterion(output, Y[n])
             avg_loss += loss.item() / len(X)
 
             # Backward
