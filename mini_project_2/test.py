@@ -41,8 +41,8 @@ class CustomNet(nn.Module):
 
 if __name__ == "__main__":
     # Dummy data
-    X = [torch.tensor([0.5, 0.7]), torch.tensor([2., 1.])]  # TODO: generate data from distribution
-    Y = [torch.tensor([1., 0.]), torch.tensor([0., 1.])]
+    X = [torch.tensor([0.5, 0.7])]  # TODO: generate data from distribution
+    Y = [torch.tensor([1., 0.])]
 
     # Dummy use case
     model = CustomNet()
@@ -61,6 +61,7 @@ if __name__ == "__main__":
 
             # Backward
             loss.backward(model)
+            print(output)
 
         # Update weights
         optimizer.step()
