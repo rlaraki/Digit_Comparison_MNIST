@@ -3,15 +3,23 @@ File: relu.py
 Description: ReLU activation implementation
 """
 from .module import Module
-
+import torch
 
 class ReLU(Module):
 
     def __init__(self):
         super(ReLU, self).__init__()
 
-    def backward(self, *grad_wr_to_output):
-        pass
+    def __sigma(self, x):
+        return torch.max(x, torch.zeros_like(x))
 
-    def forward(self, *inputs):
-        pass
+    def __dsigma(self, x):
+        return torch.where(x <= 0, torch.tensor(0.), torch.tensor(1.))
+
+    def backward(self, grad_wr_to_output):
+        return self.__dsigma(self.param().get('input')) * grad_wr_to_output
+
+    def forward(self, x):
+        self.add_parameter('input', x)
+        return self.__sigma(x)
+

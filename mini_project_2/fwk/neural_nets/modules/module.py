@@ -7,10 +7,12 @@ from collections import OrderedDict
 
 class Module(object):
     def __init__(self):
-        self._params = OrderedDict()
+        self.__params = OrderedDict()
+        self.weights = None
+        self.bias = None
 
     def param(self):
-        return self._params
+        return self.__params
 
     def forward(self, *inputs):
         raise NotImplementedError
@@ -19,7 +21,10 @@ class Module(object):
         raise NotImplementedError
 
     def add_parameter(self, key, value):
-        self._params[key] = value
+        self.__params[key] = value
+
+    def zero_grad(self):
+        self.__params['grad'] = None
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args)
