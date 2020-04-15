@@ -25,8 +25,8 @@ def train_model(model, num_epochs, train_loader,test_loader, flatten=True, verbo
             for i in range(2):  # train on each element of the pair
                 inputs_single = inputs[:, i, :, :].to(device)
                 labels_single = labels.t()[i].to(device)
-                inp_s = inp[:, i, :, :]
-                lab_s = lab.t()[i]
+                inp_s = inp[:, i, :, :].to(device)
+                lab_s = lab.t()[i].to(device)
                 if flatten:
                     inputs_single = inputs_single.view(
                         -1, inputs_single.shape[1] * inputs_single.shape[2]
