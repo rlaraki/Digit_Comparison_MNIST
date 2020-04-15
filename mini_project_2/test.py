@@ -4,6 +4,7 @@ Description: Use case of the implemented framework
 """
 import mini_project_2.fwk.neural_nets as nn
 import mini_project_2.fwk.optimizers as optim
+import mini_project_2.fwk.data as data
 import torch
 from collections import OrderedDict
 
@@ -11,7 +12,7 @@ from collections import OrderedDict
 torch.set_grad_enabled(False)
 
 # Global variables
-N_EPOCHS = 100
+N_EPOCHS = 1000
 
 
 class CustomNet(nn.Module):
@@ -27,7 +28,7 @@ class CustomNet(nn.Module):
                 'linear 3': nn.Linear(25, 25),
                 'tanh 3': nn.Tanh(),
                 'linear 4': nn.Linear(25, 2),
-                'tanh 4': nn.Tanh(),
+                'relu': nn.ReLU(),
             }
         )
         )
@@ -40,31 +41,55 @@ class CustomNet(nn.Module):
 
 
 if __name__ == "__main__":
-    # Dummy data
-    X = [torch.tensor([0.5, 0.7])]  # TODO: generate data from distribution
-    Y = [torch.tensor([1., 0.])]
+    # Data
+    X, Y = data.generate_data()
 
     # Dummy use case
     model = CustomNet()
     criterion = nn.MSE()
-    optimizer = optim.SGD(model.param(), eta=0.1/len(X))
+    optimizer = optim.SGD(model.param(), eta=0.1 / len(X))
 
     losses = []
+    step = len(X)
+    print("#" * 10 + 'Train' + "#" * 10)
     for i in range(N_EPOCHS):
         avg_loss = 0
+        error = 0
         model.zero_grad()
-        for n in range(len(X)):
+        for n in range(step):
             # Forward
             output = model(X[n])
             loss = criterion(output, Y[n])
-            avg_loss += loss.item() / len(X)
+            avg_loss += loss.item() / step
+
+            # Compute error
+            if output.max(0)[1].item() != Y[n].max(0)[1].item():
+                error += 1
 
             # Backward
             loss.backward(model)
-            print(output)
 
         # Update weights
         optimizer.step()
 
         # Print loss
-        print(avg_loss)
+        print(error)
+        print("Epoch %d, Loss=%.4f, Training_Acc=%.4f" % (i + 1, avg_loss, (step - error) / step))
+
+    # Test
+    print("#" * 10 + 'Test' + "#" * 10)
+    # Data
+    X_test, Y_test = data.generate_data()
+    test_error = 0
+    avg_test_loss = 0
+    for i in range(len(X_test)):
+        # Forward
+        output = model(X_test[i])
+        loss = criterion(output, Y_test[i])
+        avg_test_loss += loss.item() / len(X_test)
+
+        # Compute error
+        if output.max(0)[1].item() != Y[i].max(0)[1].item():
+            test_error += 1
+
+    print("Loss=%.4f, Test_Acc=%.4f" % (avg_test_loss, (step - test_error) / step))

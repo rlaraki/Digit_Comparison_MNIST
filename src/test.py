@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-File: main.py
+File: test.py
 Description: Mini project 1 main file
 """
 import torch
