@@ -5,56 +5,87 @@
 
 
 \begin{document}
-\title{EE559 Deep Learning - Miniproject 1
+\title{Deep Learning (EE559) - Miniproject 1
 Architectures testing for Image Classification}
 
 \author{
-  Rayane Laraki, Ambroise Renault, Pierre Schutz\\
+  Rayane Laraki, Ambroise Renaud, Pierre Schutz\\
   \textit{EPFL, Switzerland}
 }
 
 \maketitle
 
 \begin{abstract}
-  A critical part of scientific discovery is the
-  communication of research findings to peers or the general public.
-  Mastery of the process of scientific communication improves the
-  visibility and impact of research. While this guide is a necessary
-  tool for learning how to write in a manner suitable for publication
-  at a scientific venue, it is by no means sufficient, on its own, to
-  make its reader an accomplished writer. 
-  This guide should be a starting point for further development of 
-  writing skills.
+ Weights sharing, dropout, batch normalization, or task specific losses functions are 
+different mathematical tools developed to improve Deep Learning models performances. 
+Speed the training, increase robustness, or improve accuracy are typical domains 
+that are improve by those techniques. This work aims to present the effect of these 
+techniques as well as different neutral network architecture to solve a simple image 
+recognition problem.
 \end{abstract}
 
 \section{Introduction}
+This paper presents the work done in the scope of the Miniproject 1 for the Deep Learning (EE559) class at EPFL.
+The project goal is to test different architectures built using PyTorch \cite{pytorch} to perform an Image Recognition task. 
 
-The aim of writing a paper is to infect the mind of your reader with
-the brilliance of your idea~\cite{jones08}. 
-The hope is that after reading your
-paper, the audience will be convinced to try out your idea. In other
-words, it is the medium to transport the idea from your head to your
-reader's head. 
-In the following
-section, we show a common structure of scientific papers and briefly
-outline some tips for writing good papers in
-Section~\ref{sec:tips-writing}.
+The task is the following. Given as input a $2 \times 14 \times 14$ tensor, 
+representing two $14 \times 14$ digit images, predict if the first digit is greater or equal than the second one. 
+In order to solve this problem, we have to implement different architectures of Deep Neural Network and evaluate their performances. 
+This aims showing the impact of different improvement of models for this specific task such as weight sharing or auxiliary loss. 
 
-At that
-point, it is important that the reader is able to reproduce your
-work~\cite{schwab00,wavelab,gentleman05}. This is why it is also
-important that if the work has a computational component, the software
-associated with producing the results are also made available in a
-useful form. Several guidelines for making your user's experience with
-your software as painless as possible is given in
-Section~\ref{sec:tips-software}.
+Through this paper, we are going to present the effects on performances of weight sharing, 
+dropout, batch normalization and usage of auxiliary losses. 
 
-This brief guide is by no means sufficient, on its own, to
-make its reader an accomplished writer. The reader is urged to use the
-references to further improve his or her writing skills.
+
+\section{Models and Methods}
+
+In order perform theses architectures tests and comparison, 
+we first built a very general structure to solve the problem and get results.
+Our source code, written Python using PyTorch framework, 
+contains a generic testing script \texttt{test.py} where we test one specific model for the stated problem. 
+By doing that, we can reuse the code we made and only need to implement different models (contained in the \texttt{models} package). 
+An \texttt{utils} package also contains helper methods reused in the test script. 
+
+Our approach to test different architecture were the following. 
+Build a simple Deep Neural Network model with only Linear layers and test different techniques to improve performances. 
+Then, test different well known models architectures to evaluate their performances. 
+
+Here is a list of the different models:
+
+\begin{enumerate}
+    \item LinearReluNet: Small deep neural network with linear layers and ReLu activation.  \\
+        - Architecture: $input\_shape \times 75 \times 50 \times output\_shape$
+        - Tests:
+        
+            - Basic
+            
+            - With 50\% dropout
+            
+            - With weight sharing
+            
+            - With one auxiliary loss after the first layer
+    \item LeNet: Convolutional network described by Yann LeCun \cite{http://yann.lecun.com/exdb/lenet/}
+    \item ResNet: Resitual Network \cite{https://arxiv.org/abs/1512.03385}
+    \item ImageNet
+    \item GoogLeNet
+\end{enumerate}
+
+
+\section{Results}
+TODO
+\section{Discussion}
+TODO
+\section{Summary}
+TODO
+
+
 
 \section{The Structure of a Paper}
 \label{sec:structure-paper}
+
+
+
+
 
 Scientific papers usually begin with the description of the problem,
 justifying why the problem is interesting. Most importantly, it argues
