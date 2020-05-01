@@ -11,7 +11,7 @@ from torch.nn import functional as F
 
 class ResNet(nn.Module):
 
-    def __init__(self, nb_residual_blocks=5, nb_channels=20,
+    def __init__(self,d, nb_residual_blocks=5, nb_channels=20,
                  kernel_size = 3, nb_classes = 10,
                  skip_connections = True, batch_normalization = True):
         super(ResNet, self).__init__()
@@ -22,7 +22,7 @@ class ResNet(nn.Module):
         self.bn = nn.BatchNorm2d(nb_channels)
 
         self.resnet_blocks = nn.Sequential(
-            *(ResNetBlock(nb_channels, kernel_size, skip_connections, batch_normalization)
+            *(ResNetBlock( nb_channels, kernel_size,d,  skip_connections, batch_normalization)
               for _ in range(nb_residual_blocks))
         )
 
@@ -38,7 +38,7 @@ class ResNet(nn.Module):
 ######################################################################
 
 class ResNetBlock(nn.Module):
-    def __init__(self, nb_channels, kernel_size,
+    def __init__(self, nb_channels, kernel_size,d,
                  skip_connections = True, batch_normalization = True):
         super(ResNetBlock, self).__init__()
 
@@ -56,6 +56,7 @@ class ResNetBlock(nn.Module):
 
         self.skip_connections = skip_connections
         self.batch_normalization = batch_normalization
+        self.dropout = nn.Dropout(d)
 
     def forward(self, x):
         y = self.conv1(x)

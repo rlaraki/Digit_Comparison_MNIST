@@ -14,7 +14,7 @@ import torch.nn as nn
 
 # TODO: Optimize this network
 class LeNet(nn.Module):
-    def __init__(self):
+    def __init__(self, d1, d2):
         super(LeNet, self).__init__()
 
         self.conv_net = nn.Sequential(
@@ -22,9 +22,11 @@ class LeNet(nn.Module):
                 [
                     ("C1", nn.Conv2d(1, 6, kernel_size=(2, 2))),
                     ("Relu1", nn.ReLU()),
+                    ("D1", nn.Dropout(d1)),
                     ("S2", nn.MaxPool2d(kernel_size=(2, 2), stride=2)),
                     ("C3", nn.Conv2d(6, 7, kernel_size=(2, 2))),
                     ("Relu3", nn.ReLU()),
+                    ("D2", nn.Dropout(d2)),
                     ("S4", nn.MaxPool2d(kernel_size=(2, 2), stride=2)),
                     ("C5", nn.Conv2d(7, 120, kernel_size=(2,2))),
                     ("Relu5", nn.ReLU()),
