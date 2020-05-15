@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 """
 File: LinearReluNet.py
-Author: Ambroise Renaud
-Email: ambroise.renaud@gmail.com
-Github: ambroisernd
 Description: Pytorch implementation of a neural network with linear layer and relu activation funtions
 """
 

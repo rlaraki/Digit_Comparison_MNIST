@@ -31,8 +31,9 @@ def plot_losses(all_train_losses, all_test_losses, model_name):
     plt.show()
     
 def plot_accuracy(all_accuracies, model_name):
+    print('Test accuracy mean = '+ str(np.mean(all_accuracies)))
     plt.figure(figsize=(15, 8))
     plt.boxplot(all_accuracies)
-    plt.title('Test Accuracy distribution using ' + model_name)
+    plt.title('Test Accuracy distribution using ' + model_name + )
     plt.show()
     
