@@ -1,18 +1,17 @@
-#!/usr/bin/env python3
 
 from collections import OrderedDict
 
 import torch.nn as nn
 
 
-class SiameseConv(nn.Module):   
+class Conv_Net_2(nn.Module):   
     def __init__(self, d1, d2):
-        super(SiameseConv, self).__init__()
+        super(Conv_Net_2, self).__init__()
 
         self.cnn_layers = nn.Sequential(
             OrderedDict(
                 [
-                    ("C1", nn.Conv2d(1, 6, kernel_size=2)),
+                    ("C1", nn.Conv2d(2, 6, kernel_size=2)),
                     ("BN1", nn.BatchNorm2d(6)),
                     ("Relu1", nn.ReLU()),
                     ("D1", nn.Dropout(d1)),
@@ -34,28 +33,20 @@ class SiameseConv(nn.Module):
                 [
                     ("F6", nn.Linear(100, 84)),
                     ("Relu6", nn.ReLU()),
-                    ("F7", nn.Linear(84, 10)),
+                    ("F7", nn.Linear(84, 2)),
                     ("LogSoftmax", nn.LogSoftmax(dim=-1)),
                 ]
             )
         )
 
     # Defining the forward pass    
-    def forward_one(self, x):
-        x = self.cnn_layers(x)
-        x = x.view(x.shape[0], -1)
-        x = self.linear_layers(x)
+    def forward(self, x):
+        out = self.cnn_layers(x)
+        out = out.view(x.shape[0], -1)
+        out = self.linear_layers(out)
         return out
     
-    def forward(self, x1, x2):
-        out1 = self.forward_one(x1)
-        out2 = self.forward_one(x2)
-        dis = torch.abs(out1 - out2)
-        out = self.out(dis)
-        #  return self.sigmoid(out)
-        return out
-    
-def simple_conv_net(**kwargs):
+def conv_net_2(**kwargs):
     """Wrapper for the neural network arguments"""
-    model = SimpleConvNet(**kwargs)
+    model = Conv_Net_2(**kwargs)
     return model

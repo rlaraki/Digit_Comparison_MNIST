@@ -11,12 +11,12 @@ from torch.nn import functional as F
 
 class ResNet(nn.Module):
 
-    def __init__(self,d, nb_residual_blocks=5, nb_channels=20,
+    def __init__(self,d, input_channels = 1, nb_residual_blocks=5, nb_channels=20,
                  kernel_size = 3, nb_classes = 10,
                  skip_connections = True, batch_normalization = True):
         super(ResNet, self).__init__()
 
-        self.conv = nn.Conv2d(1, nb_channels,
+        self.conv = nn.Conv2d(input_channels, nb_channels,
                               kernel_size = kernel_size,
                               padding = (kernel_size - 1) // 2)
         self.bn = nn.BatchNorm2d(nb_channels)
