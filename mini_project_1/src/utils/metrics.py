@@ -33,16 +33,15 @@ def accuracy(model, data_loader, auxiliary = False, flatten=False):
     acc = correct / total
     return acc
 
-def accuracy_two_ch(model, data_loader, split, flatten = True):
+def accuracy_two_ch(model, data_loader, split, auxiliary=False, flatten = True):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     with torch.no_grad():
         correct = 0
         total = 0
         for inputs, labels in data_loader:
             inputs = inputs.to(device)
-            if flatten:
-                inputs_1 = inputs_1.view(1, inputs.shape[1] * inputs.shape[2])
-            if split:
+                
+            if split | auxiliary:
                 outputs_1,_,_ = model(inputs)
             else : 
                 outputs_1 = model(inputs)

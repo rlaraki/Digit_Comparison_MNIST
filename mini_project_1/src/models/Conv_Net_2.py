@@ -39,17 +39,6 @@ class Conv_Net_2(nn.Module):
                 ]
             )
         )
-        
-        self.linear_aux = nn.Sequential(
-            OrderedDict(
-                [
-                    ("Fa", nn.Linear(100, 84)),
-                    ("Relua", nn.ReLU()),
-                    ("F7a", nn.Linear(84, 10)),
-                    ("LogSoftmaxa", nn.LogSoftmax(dim=-1)),
-                ]
-            )
-        )
 
     # Defining the forward pass    
     def forward(self, x):

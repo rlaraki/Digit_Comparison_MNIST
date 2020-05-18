@@ -90,7 +90,7 @@ def train_model_two_ch(model, device, num_epochs, train_loader, test_loader,spli
             te_input = te_inputs.to(device)
             te_label = te_labels.to(device)
             
-            if (auxiliary == True) & (not weight_sharing):    
+            if (auxiliary == True):    
                 tr_classes = tr_classes.to(device)
                 te_classes = te_classes.to(device)
                     
@@ -98,7 +98,7 @@ def train_model_two_ch(model, device, num_epochs, train_loader, test_loader,spli
             optimizer.zero_grad()
             
             
-            if (split):
+            if (split) or (auxiliary):
             # Compute loss
                 tr_output,out1,out2 = model(tr_input)
                 te_output,out1,out2 = model(te_input)
