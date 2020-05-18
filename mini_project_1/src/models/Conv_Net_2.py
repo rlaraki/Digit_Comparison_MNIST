@@ -7,7 +7,8 @@ import torch.nn as nn
 class Conv_Net_2(nn.Module):   
     def __init__(self, d1, d2):
         super(Conv_Net_2, self).__init__()
-
+        
+        
         self.cnn_layers = nn.Sequential(
             OrderedDict(
                 [
@@ -38,13 +39,26 @@ class Conv_Net_2(nn.Module):
                 ]
             )
         )
+        
+        self.linear_aux = nn.Sequential(
+            OrderedDict(
+                [
+                    ("Fa", nn.Linear(100, 84)),
+                    ("Relua", nn.ReLU()),
+                    ("F7a", nn.Linear(84, 10)),
+                    ("LogSoftmaxa", nn.LogSoftmax(dim=-1)),
+                ]
+            )
+        )
 
     # Defining the forward pass    
     def forward(self, x):
+
         out = self.cnn_layers(x)
         out = out.view(x.shape[0], -1)
-        out = self.linear_layers(out)
-        return out
+        res = self.linear_layers(out)
+        
+        return res
     
 def conv_net_2(**kwargs):
     """Wrapper for the neural network arguments"""

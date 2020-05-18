@@ -17,7 +17,7 @@ class LeNet(nn.Module):
     def __init__(self, d1, d2):
         super(LeNet, self).__init__()
 
-        self.conv_net = nn.Sequential(
+        self.cnn_layers = nn.Sequential(
             OrderedDict(
                 [
                     ("C1", nn.Conv2d(1, 6, kernel_size=(2, 2))),
@@ -46,7 +46,7 @@ class LeNet(nn.Module):
         )
 
     def forward(self, x):
-        output = self.conv_net(x)
+        output = self.cnn_layers(x)
         output = output.view(x.shape[0], -1)
         output = self.fully_connected(output)
         return output
