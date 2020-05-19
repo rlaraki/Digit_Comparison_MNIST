@@ -22,6 +22,3 @@ class Tanh(Module):
     def forward(self, x):
         self.input = x
         return self.__sigma(x)
-    
-    def zero_grad(self):
-        pass

@@ -16,4 +16,7 @@ class Module(object):
     def param(self):
         return []
     
+    def zero_grad(self):
+        pass
+    
 

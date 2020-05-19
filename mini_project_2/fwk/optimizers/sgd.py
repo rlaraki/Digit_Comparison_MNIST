@@ -12,9 +12,8 @@ class SGD(Optimizer):
         self.eta = eta
 
     def step(self):
-        for layer_param in self.params:
-            for (weight, grad) in layer_param:
-                weight.sub_(grad*self.eta)
+        for (param, grad) in self.params:
+            param.sub_(grad*self.eta)
 
     def set_eta(self, value):
         self.eta = value

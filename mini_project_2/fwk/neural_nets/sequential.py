@@ -27,7 +27,7 @@ class Sequential(Module):
         return prev_d
     
     def param(self):
-        return [self.layers.get(key).param() for key in self.layers]
+        return [p for key in self.layers for p in self.layers.get(key).param()]
      
     def zero_grad(self):
         for key in self.layers:
