@@ -8,22 +8,11 @@ import math
 
 def generate_data(size=1000):
     # One hot
-    zero = torch.tensor([0.])
-    one = torch.tensor([1.])
-    # Random
-    x = torch.rand(size)
-    y = torch.rand(size)
-
-    # Create pairs
-    dataset = [torch.tensor([x_i, y_i]) for x_i, y_i in zip(x, y)]
+    dataset = torch.Tensor(1000, 2).uniform_(0, 1)
+    
     # Compute distance from radius
-    distances = (torch.pow(x - 0.5, 2) + torch.pow(y - 0.5, 2)).sqrt()
-    labels = torch.where(distances > (1 / math.sqrt((2 * math.pi))), zero, one)
-    # Populate one-hot labels
-    one_hot = []
-    for x in labels:
-        if x.item() > .5:
-            one_hot.append(torch.tensor([0., 1.]))
-        else:
-            one_hot.append(torch.tensor([1., 0.]))
-    return dataset, one_hot
+    distances = torch.pow(dataset - 0.5, 2).sum(1).sqrt()
+    labels = torch.where(distances > (1 / math.sqrt((2 * math.pi))), torch.Tensor([0]), torch.Tensor([1]))
+    one_hot = torch.Tensor([[0., 1.] if l.item() == 1. else [1., 0.] for l in labels])
+    
+    return dataset, labels, one_hot
