@@ -5,29 +5,128 @@
 
 
 \begin{document}
-\title{EE559 Deep Learning - Miniproject 1
-Architectures testing for Image Classification}
+\title{ Mini Deep Learning Framework \\ Deep Learning (EE559) - Project 2 }
 
 \author{
-  Rayane Laraki, Ambroise Renault, Pierre Schutz\\
+  Rayane Laraki, Pierre Schutz\\
   \textit{EPFL, Switzerland}
 }
 
+
 \maketitle
 
-\begin{abstract}
-  A critical part of scientific discovery is the
-  communication of research findings to peers or the general public.
-  Mastery of the process of scientific communication improves the
-  visibility and impact of research. While this guide is a necessary
-  tool for learning how to write in a manner suitable for publication
-  at a scientific venue, it is by no means sufficient, on its own, to
-  make its reader an accomplished writer. 
-  This guide should be a starting point for further development of 
-  writing skills.
-\end{abstract}
-
 \section{Introduction}
+
+The goal of this project is to design a mini-framework to build deep learning models in python. 
+It has to built using only PyTorch tensor operations and Python math library, without autograd. 
+
+This report presents the architecture of this small library, with some test and performance analysis.
+
+\section{Functionalities}
+
+The framework provide the following tools:
+\begin{itemize}
+    \item Linear fully connected layer module to build sequential networks
+    \item ReLu and Tanh activation functions
+    \item Stochastic gradient descent optimizer.
+    \item Mean Squared Error loss function
+\end{itemize}
+
+
+\section{Architecture}
+
+The framework is divided into two main categories: neural network modules and optimizers. We are going to details each component and it's implementation.
+
+\subsection{Module}
+
+Module is an abstract class than represents a neural network module. It is the parent class of all other modules and determine the main methods than should be defined. 
+
+\texttt{forward}: Define module behavior during the forward pass of a neural network training.
+
+\texttt{backward}: Define module behavior during the backward pass of a neural network training. 
+
+\textt{param}: Modules should return their parameters and gradients so that it can be update by the optimizer. In general it return an empty list (for parameter-less modules)
+
+\texttt{zero\_grad}: This method should reset the gradient value of a module when called. In general it is just ignored (for parameter-less modules).
+
+\subsection{Rectified Linear Unit activation (ReLU)}
+
+This activation function module compute the output of ReLU function given the input parameter. It helps bind the output values within a given range a is usually used after a layer of neural network. The module stores an input parameter to keep the input of forward pass during backward computation. The ReLU function and derivative are defined in the methods called \texttt{\_\_sigma} and \texttt{\_\_dsigma} respectively.
+
+\texttt{forward}: During the forward pass, the ReLU module simply compute the ReLU function of the input:
+
+\begin{equation}
+   ReLU(x) = max(0, x) 
+\end{equation}
+
+\texttt{backward}: During the backward pass, the ReLU module return the derivative of the ReLU function times the given gradient. It therefore propagate the gradient computation for that layer. 
+
+\begin{equation}
+    ReLU'(x) = \left\{
+    \begin{array}{lr}
+        1 &  \textrm{if }x > 0\\
+        0 & \textrm{otherwise}
+    \end{array}\right\}
+    
+\end{equation}
+
+
+\subsection{Hyperbolic Tangent activation (Tanh)}
+
+Similarly as ReLU, this activation function module help to bind the output to predefined range for a given input. This activation function use the hyperbolic tangent function to bind input to $[-1,1]$ range.
+
+The module is similar in all means to the ReLU. The only different is in the activation function:
+
+
+\begin{equation}
+    Tanh(x) = \frac{e^{2x} - 1}{e^{2x} + 1}
+\end{equation}
+
+
+
+\begin{equation}
+    Tanh'(x) = 1 - Tanh(x)^2
+\end{equation}
+
+\subsection{Linear}
+
+This module represents a fully connected linear layer of a neural network. It stores a weights matrix corresponding to the input of output size of the layer as well as a bias vector. This module also stores the gradients of those parameters. 
+
+\texttt{\_\_init\_\_(input\_size, output\_size}: The init function create the weight, bias parameters and their gradients. It also create an input parameter that will store the layer input between forward and backward pass. The weight and bias are initialized with normal distribution. 
+
+\texttt{forward}: The forward pass computes the return of the fully connected layer by multiplying the input my the weights and adding the bias term. The input vector is a matrix to enable mini batches and process multiple input in the same pass.
+
+\texttt{backward}: The backward pass computes the gradients with respect to all parameters and update the parameter gradient values. 
+
+\texttt{param}: Return a list of pair containing the weight, bias and for each of them their gradients for the optimizer. 
+
+\texttt{zero\_grad}: Reset the weight and bias gradient vectors to 0.
+
+\subsection{Sequential}
+
+This module represents a group of module assembled together sequentially. It will contain multiple pairs of linear layers and activation functions. The sequential module can represent a fully neural network. We chose to store the child modules in a ordered dictionary to be able to print it nicely. The goal were to make it similar as PyTorch. 
+
+\texttt{\_\_init\_\_}: Test
+
+
+
+
+
+
+
+
+
+The framework architecture is the following: \\
+1. Modules \\
+1.1. Activation \\
+1.2. Loss \\
+2. Optimizer \\
+
+All classes in the mod
+Modules are used to construct the neural network and one optimizer can be selected to train it. 
+
+
+
 
 The aim of writing a paper is to infect the mind of your reader with
 the brilliance of your idea~\cite{jones08}. 
