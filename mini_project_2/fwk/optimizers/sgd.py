@@ -12,7 +12,7 @@ class SGD(Optimizer):
         self.eta = eta
 
     def step(self):
-        for (param, grad) in self.params: # Iterate of the modules of the neural network
+        for (param, grad) in self.params: # Iterate over the modules of the neural network
             param.sub_(grad*self.eta) # Update the weights
 
     def set_eta(self, value):

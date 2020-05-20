@@ -1,8 +1,35 @@
 
 import torch.nn as nn
 from torch.optim import Adam     
+from models.Aux import aux
+from models.Siamese import siamese
             
+def get_model(model_info, nb_channels, split, weight_sharing, auxiliary):
 
+
+    if (split):
+        args = model_info.get("args")
+        if args is None:
+            model = model_info.get('f1')()
+        else:
+            model = model_info.get('f1')(**args)
+            model_1 = model
+        args = {"m1": model_1, "ws": weight_sharing, "flatten":model_info.get('flatten')}
+        model = siamese(**args)
+    else:
+        if (model_info.get("name") == "Residual Net"):
+            args = model_info.get('args'+str(nb_channels))
+            model = model_info.get('f1')(**args)
+        else:
+            args = model_info.get("args")    
+            model =  model_info.get('f'+ str(nb_channels))(**args)
+        if (auxiliary) & (nb_channels == 2):
+            model_1 = model
+            args = {"m1": model_1, "ws": weight_sharing, "flatten":model_info.get('flatten')}
+            model = aux(**args)
+            
+            
+    return model
 
 # Train a model on given data
 def train_model(model, device, num_epochs, train_loader, test_loader, flatten=False, verbose=False):
