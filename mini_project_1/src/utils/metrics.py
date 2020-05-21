@@ -4,52 +4,37 @@ File: metrics.py
 Description: utils file to store metrics functions 
 """
 import torch
-def accuracy(model, data_loader, auxiliary = False, flatten=False):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import math
+
+
+def extract_mean_std(array):
+    mean = sum(array) / len(array)
+    std = math.sqrt(sum([pow(x - mean, 2) for x in array]) / len(array))
+
+    return mean, std
+
+
+
+# Compute accuracy for digit recognition and comparison.
+def accuracy(model, data_loader, split, auxiliary=False, flatten=True):
     with torch.no_grad():
         correct = 0
         total = 0
         for inputs, labels in data_loader:
-            inputs_1 = inputs[:, 0, :, :].to(device)
-            inputs_2 = inputs[:, 1, :, :].to(device)
             
-            if flatten:
-                inputs_1 = inputs_1.view(-1, inputs_1.shape[1] * inputs_1.shape[2])
-                inputs_2 = inputs_2.view(-1, inputs_2.shape[1] * inputs_2.shape[2])
-            else:
-                inputs_1 = inputs_1.unsqueeze(1) # Add color channel
-                inputs_2 = inputs_2.unsqueeze(1)
-            
-            
-            outputs_1 = model(inputs_1)
-            outputs_2 = model(inputs_2)
-
-            _, predicted_1 = outputs_1.max(1)
-            _, predicted_2 = outputs_2.max(1)
-            predicted = predicted_1 <= predicted_2
-            correct += (predicted.cpu() == labels).sum().item()
-            total += labels.size(0)
-
-    acc = correct / total
-    return acc
-
-def accuracy_two_ch(model, data_loader, split, auxiliary=False, flatten = True):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    with torch.no_grad():
-        correct = 0
-        total = 0
-        for inputs, labels in data_loader:
-            inputs = inputs.to(device)
-                
+            if flatten and (not split):
+                inputs = inputs.view(-1, inputs.shape[1]*inputs.shape[2] * inputs.shape[3])
+               
+            # Compute model prediction
             if split | auxiliary:
-                outputs_1,_,_ = model(inputs)
-            else : 
+                outputs_1, _, _ = model(inputs)
+            else:
                 outputs_1 = model(inputs)
-            
 
-            _,predicted = outputs_1.max(1)
-            
-            correct += (predicted.cpu() == labels).sum().item()
+            predicted = outputs_1.max(1)[1]
+
+            # Compute accuracy
+            correct += (predicted == labels).sum().item()
             total += labels.size(0)
 
     acc = correct / total
