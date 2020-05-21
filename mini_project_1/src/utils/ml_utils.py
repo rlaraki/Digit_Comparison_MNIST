@@ -107,6 +107,10 @@ def train_model(model, num_epochs, train_loader, test_loader, split=True, weight
         # Iterate over the train/ batches 
         for (tr_inputs, tr_classes, tr_labels), (te_inputs, te_classes, te_labels) in zip(train_loader, test_loader):
             
+            if flatten and (not split):
+                tr_inputs = tr_inputs.view(-1, tr_inputs.shape[1]*tr_inputs.shape[2] * tr_inputs.shape[3])
+                te_inputs = te_inputs.view(-1, te_inputs.shape[1]*te_inputs.shape[2] * te_inputs.shape[3])
+                
 
             optimizer.zero_grad()
 

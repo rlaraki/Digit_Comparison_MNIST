@@ -33,9 +33,7 @@ class LinearNet(nn.Module):
         )
 
     def forward(self, x):
-        if not self.only_image:
-            x = x.view(-1, x.shape[1], x.shape[2] * x.shape[3])
-                
+        
         out = self.net(x)
         return out
 

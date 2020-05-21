@@ -25,6 +25,10 @@ class Auxiliary(nn.Module):
         )
 
     def forward(self, x):
+        
+        if self.flatten:
+            x = x.view(-1, 2, 14,14)
+        
         x1 = x[:, 0, :, :]
         x2 = x[:, 1, :, :]
 
@@ -33,7 +37,10 @@ class Auxiliary(nn.Module):
 
         out1 = self.recognition_layer(x1)
         out2 = self.recognition_layer(x2)
-
+        
+        if self.flatten:
+            x = x.view(-1, 2*14*14)
+        
         res = self.m1(x)
 
         return res, out1, out2
