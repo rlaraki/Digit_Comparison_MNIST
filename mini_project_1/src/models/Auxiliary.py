@@ -25,9 +25,13 @@ class Auxiliary(nn.Module):
         )
 
     def forward(self, x):
-        
+
+        # Compute the main forward pass
+        res = self.m1(x)
+
+        # Reshape data for auxliary loss if necessary
         if self.flatten:
-            x = x.view(-1, 2, 14,14)
+            x = x.view(-1, 2, 14, 14)
         
         x1 = x[:, 0, :, :]
         x2 = x[:, 1, :, :]
@@ -35,13 +39,9 @@ class Auxiliary(nn.Module):
         x1 = x1.view(-1, x1.shape[1] * x1.shape[2])
         x2 = x2.view(-1, x2.shape[1] * x2.shape[2])
 
+        # Compute auxiliary pass.
         out1 = self.recognition_layer(x1)
         out2 = self.recognition_layer(x2)
-        
-        if self.flatten:
-            x = x.view(-1, 2*14*14)
-        
-        res = self.m1(x)
 
         return res, out1, out2
 

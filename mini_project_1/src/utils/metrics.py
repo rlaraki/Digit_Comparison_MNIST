@@ -21,7 +21,8 @@ def accuracy(model, data_loader, split, auxiliary=False, flatten=True):
         correct = 0
         total = 0
         for inputs, labels in data_loader:
-            
+
+            # Reshape input for linear model
             if flatten and (not split):
                 inputs = inputs.view(-1, inputs.shape[1]*inputs.shape[2] * inputs.shape[3])
                

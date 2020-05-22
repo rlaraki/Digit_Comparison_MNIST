@@ -14,84 +14,91 @@ from .dlc_practical_prologue import generate_pair_sets
 
 import time
 
+# Match model name with instance
 SIMPLE_MODELS = {
     "LeNet": le_net,
     "LinearNet": linear_net,
     "ResNet": res_net
 }
 
+
 def select_model(model_name, auxiliary_loss=False, weight_sharing=False, is_siamese=False, dropout=0):
-    
     if weight_sharing and not is_siamese:
         raise Exception("You can't build weight sharing without siamese network")
-    
+
+    # Create the basic model
     flatten = True if model_name == "LinearNet" else False
-    model = SIMPLE_MODELS[model_name](is_siamese) if flatten else SIMPLE_MODELS[model_name](dropout, is_siamese) 
-    
+    model = SIMPLE_MODELS[model_name](is_siamese) if flatten else SIMPLE_MODELS[model_name](dropout, is_siamese)
+
+    # Encapsulate model in siamese
     if is_siamese:
         return siamese(model, flatten, weight_sharing), flatten
-    
+
+    # Encapsulate model in Auxiliary module
     if auxiliary_loss:
         return auxiliary_net(model, flatten), flatten
-    
-    return model, flatten   
 
-def full_train_test(model_name, auxiliary_loss=False, is_siamese=False, weight_sharing=False, num_iter=10, num_epochs=25, data_size=1000, batch_size=10, aux_rate = 0.5, verbose=False):
-    
-    train_loss_matrix = [] 
+    return model, flatten
+
+
+def full_train_test(model_name, auxiliary_loss=False, is_siamese=False, weight_sharing=False, num_iter=10,
+                    num_epochs=25, data_size=1000, batch_size=10, aux_rate=0.5, verbose=False):
+
+    # Init metrics arrays
+    train_loss_matrix = []
     validation_loss_matrix = []
-    
+
     accuracy_array = []
     time_array = []
-    
+
     for it in range(1, num_iter + 1):
         if verbose:
             print("Iteration %d" % it)
-        
+
         start_time = time.time()
-        
+
         # Create model instance
         model, flatten = select_model(model_name, auxiliary_loss, weight_sharing, is_siamese)
-        
+
         # Generate a train and validation set
         train_input, train_target, train_classes, val_input, val_target, val_classes = generate_pair_sets(data_size)
-        
-        
-        tr_loader, val_loader = build_loader(train_input,train_classes, train_target, val_input, val_classes,val_target,  batch_size)
-        tr_losses, val_losses = train_model(model, num_epochs, tr_loader, val_loader, is_siamese , weight_sharing , auxiliary_loss, flatten, verbose, aux_rate)
-        
-        #
+
+        tr_loader, val_loader = build_loader(train_input, train_classes, train_target, val_input, val_classes,
+                                             val_target, batch_size)
+
+        # Train model
+        tr_losses, val_losses = train_model(model, num_epochs, tr_loader, val_loader, is_siamese, weight_sharing,
+                                            auxiliary_loss, flatten, verbose, aux_rate)
+
         train_loss_matrix.append(tr_losses)
         validation_loss_matrix.append(val_losses)
-        
-        # Generate test set
-        _,_,_, acc_input, acc_target, _ = generate_pair_sets(data_size)
-        acc_loader = build_test_loader(acc_input, acc_target, batch_size)
-        
-        # Compute test accuracy
-        acc = accuracy(model, acc_loader,is_siamese,auxiliary_loss, flatten )
 
-        end_time = time.time()   
-        
+        # Generate test set
+        _, _, _, acc_input, acc_target, _ = generate_pair_sets(data_size)
+        acc_loader = build_test_loader(acc_input, acc_target, batch_size)
+
+        # Compute test accuracy
+        acc = accuracy(model, acc_loader, is_siamese, auxiliary_loss, flatten)
+
+        end_time = time.time()
+
         accuracy_array.append(acc)
         time_array.append(end_time - start_time)
-    
+
     # Plot performances metrics
     if verbose:
-        plot_losses(train_loss_matrix, validation_loss_matrix, model_name)    
+        plot_losses(train_loss_matrix, validation_loss_matrix, model_name)
         plot_accuracy(accuracy_array, model_name)
-          
-    
+
     acc_mean, acc_std = extract_mean_std(accuracy_array)
     time_mean, time_std = extract_mean_std(time_array)
-    
-    print("Accuracy: %.3f +/- %.3f" %(acc_mean, acc_std))
+
+    print("Accuracy: %.3f +/- %.3f" % (acc_mean, acc_std))
     print("Iteration time:  %.3f +/- %.3f seconds" % (time_mean, time_std))
-    
 
 
 def train_model(model, num_epochs, train_loader, test_loader, split=True, weight_sharing=True,
-                       auxiliary=False, flatten=True, verbose=False, auxiliary_f=1):
+                auxiliary=False, flatten=True, verbose=False, auxiliary_f=1):
     # Create model parameters
     criterion = nn.CrossEntropyLoss()
     optimizer = Adam(model.parameters(), lr=1e-3)
@@ -106,11 +113,10 @@ def train_model(model, num_epochs, train_loader, test_loader, split=True, weight
 
         # Iterate over the train/ batches 
         for (tr_inputs, tr_classes, tr_labels), (te_inputs, te_classes, te_labels) in zip(train_loader, test_loader):
-            
+
             if flatten and (not split):
-                tr_inputs = tr_inputs.view(-1, tr_inputs.shape[1]*tr_inputs.shape[2] * tr_inputs.shape[3])
-                te_inputs = te_inputs.view(-1, te_inputs.shape[1]*te_inputs.shape[2] * te_inputs.shape[3])
-                
+                tr_inputs = tr_inputs.view(-1, tr_inputs.shape[1] * tr_inputs.shape[2] * tr_inputs.shape[3])
+                te_inputs = te_inputs.view(-1, te_inputs.shape[1] * te_inputs.shape[2] * te_inputs.shape[3])
 
             optimizer.zero_grad()
 
