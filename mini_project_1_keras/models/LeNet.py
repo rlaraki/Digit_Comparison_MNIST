@@ -20,9 +20,9 @@ class LeNet(tf.keras.Model):
         
         self.cnn_layers = Sequential([
                                       Conv2D(6, (2,2), data_format = 'channels_first', input_shape=(input_shape, 14, 14) , activation='relu'),
-                                      MaxPooling2D(pool_size=(2,2), strides = (2,2)),
+                                      MaxPooling2D(pool_size=(2,2), strides = (2,2), data_format = 'channels_first'),
                                       Conv2D(7, (2,2), input_shape=(6, 6, 6), data_format = 'channels_first',activation='relu'),
-                                      MaxPooling2D(pool_size=(2,2), strides = (2,2)),
+                                      MaxPooling2D(pool_size=(2,2), strides = (2,2), data_format = 'channels_first'),
                                       Conv2D(120, (2,2), input_shape=(7, 2, 2), data_format = 'channels_first',activation='relu')])
         
         
